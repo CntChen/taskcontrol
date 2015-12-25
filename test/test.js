@@ -50,5 +50,5 @@ for (var i = 0; i < testLenght; i++) {
 
 httpQueryTaskControl.start();
 httpQueryTaskControl.finish(function() {
-  console.log('test finish');
+  console.log('all task finish');
 });
