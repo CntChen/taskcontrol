@@ -9,6 +9,10 @@
 ## 安装
 > npm install git://github.com/CntChen/taskcontrol.git
 
+## 测试
+
+> node directory_of_this_module/test/test.js
+
 ## 使用
 * 初始化
 ```
@@ -29,29 +33,35 @@ var myTaskControl = new TaskControl(opt);
 * 方法
 
 1. `myTaskControl.addTask(task)` 添加任务,通过多次调用添加多个任务
-  * task 包含特定参数的函数,必须有两个参数,这两个参数都是函数,参数1在task完成触发,参数2在task失败触发
-  * task参数1,`taskEnd`,在异步任务完成时调用,通知`taskontrol`任务完成
-  * task参数2,`taskError`,在异步任务出错时调用,通知`taskcontorl`重试
+  * `task`是包含特定参数的函数,必须有两个参数,这两个参数都是函数,参数1在task完成触发,参数2在task失败触发
+  * `task`参数1,`taskEnd`,在异步任务完成时调用,通知`taskontrol`任务完成
+  * `task`参数2,`taskError`,在异步任务出错时调用,通知`taskcontorl`重试
 
-demo
+*示例:*
 ```
+https = require('https');
+
 var task = function(taskEnd, taskError) {
     var queryStr = 'https://github.com';
     var token = 'taskOne';
+    //网络请求
     https.get(queryStr, function(res) {
       var data = '';
       res.on('data', function(chunk) {
         data = data + chunk;
       });
+      // 任务执行完成回调
       res.on('end', function() {
         console.error(token, 'end');
         taskEnd();
       });
+      // 任务失败回调
       res.on('error', function() {
         console.error(token, 'error');
         taskError();
       });
     }).on('error', function(e) {
+      // 任务失败回调
       taskError();
       this.destroy();
     }).setTimeout(30000, function() {
@@ -59,7 +69,8 @@ var task = function(taskEnd, taskError) {
       this.abort();
     });
 }
-// add
+
+// 添加任务到TaskControl中
 myTaskControl.addTask(task);
 
 ```
