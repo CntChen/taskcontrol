@@ -1,0 +1,25 @@
+{
+  "name": "taskcontrol",
+  "version": "1.0.0",
+  "description": "task control module",
+  "main": "src/taskcontrol.js",
+  "scripts": {
+    "test": "test/test.js"
+  },
+  "keywords": [
+    "taskcontorl"
+  ],
+  "author": "CntChen",
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CntChen/taskcontorl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CntChen/taskcontorl/issues"
+  },
+  "homepage": "https://github.com/CntChen/taskcontorl#readme"
+}
