@@ -1,7 +1,7 @@
 var https = require('https');
 var TaskControl = require('./../src/taskcontrol.js');
 var httpQueryTaskControl = new TaskControl({
-  multi: 5,
+  multi: 2,
   retry: 5
 });
 
@@ -9,7 +9,7 @@ var httpQueryTaskControl = new TaskControl({
 var zhihuUrl = 'https://www.zhihu.com/question/';
 var questionIndex = 38287243;
 
-var testLenght = 200;
+var testLenght = 80;
 
 for (var i = 0; i < testLenght; i++) {
   var queryStr = zhihuUrl + (questionIndex + i);
@@ -46,6 +46,7 @@ for (var i = 0; i < testLenght; i++) {
   })(token, queryStr);
 
   httpQueryTaskControl.addTask(task);
+
 }
 
 httpQueryTaskControl.start();

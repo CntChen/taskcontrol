@@ -1,26 +1,42 @@
 var defaultMulti = 5;
 var defaultRetry = 5;
 var defaultTaskControlTimeout = 100;
+var defaulTaskQueueExpand = 10;
 
 
 var TaskControl = function(opt) {
   opt = opt || {};
   this.multi = opt.multi || defaultMulti;
-  this.retry = opt.retry || defaultRetry;
+  this.retry = opt.retry || defaultRetry;  
   this.increaseID = 0;
   this.workingTaskCount = 0;
-  this.retryTask = {};
   this.retryTaskTime = {};
   this.workingTask = {};
   this.taskQueue = [];
   this.finishCallback = null;
+  this.MaxTasksOnTaskQueue = this.multi * defaulTaskQueueExpand;
   this.TaskControlTimeout = defaultTaskControlTimeout;
+  this.taskControlTimeoutInterval = null;
 }
 
 
+TaskControl.prototype.readyToAddTask = function() {
+  return this.taskQueue.length < this.MaxTasksOnTaskQueue;
+}
+
+
+
 TaskControl.prototype.addTask = function(task) {
+  if(this.taskQueue.length >= this.MaxTasksOnTaskQueue * 2){
+    //console.log('task queue full, please add task later.');
+    //return false;
+  }
+
+  //console.log('task added.');
   task.id = task.id || ++this.increaseID;
   this.taskQueue.push(task);
+
+  return true;
 }
 
 
@@ -28,21 +44,23 @@ TaskControl.prototype.start = function() {
   var that = this;
   this.startNextTask();
 
-  setTimeout(function() {
+  this.taskControlTimeoutInterval =  setInterval(function() {
     that.TaskControlTimeout--;
     if (that.TaskControlTimeout <= 0) {
       console.log('TaskControl timeout. Task left:', that.taskQueue.length);
-      that.taskQueue.clear();
-      that.finishCallback();
+      clearInterval(this.taskControlTimeoutInterval);
     }
   }, 1000);
 }
 
 
 TaskControl.prototype.finish = function(func) {
+  var that = this;
+
   this.finishCallback = function() {
     console.log('TaskControl finish');
     func();
+    that.taskControlTimeoutInterval && clearInterval(that.taskControlTimeoutInterval);
   };
 }
 
