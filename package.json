@@ -4,7 +4,7 @@
   "description": "task control module",
   "main": "src/taskcontrol.js",
   "scripts": {
-    "test": "test/test.js"
+    "test": "node --harmony test/test.js"
   },
   "keywords": [
     "taskcontorl"

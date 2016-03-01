@@ -11,7 +11,7 @@
 
 ## 测试
 
-> node directory_of_this_module/test/test.js
+> npm test
 
 ## 使用
 * 初始化
@@ -32,12 +32,13 @@ var myTaskControl = new TaskControl(opt);
 
 * 方法
 
-1. `myTaskControl.addTask(task)` 添加任务,通过多次调用添加多个任务
+1. `myTaskControl.addTaskGenerator(taskGenerator)` 添加任务,通过多次调用添加多个任务
+  * `taskGenerator`是一个`Generator`,内部`yield`出需要执行的`task`  
   * `task`是包含特定参数的函数,必须有两个参数,这两个参数都是函数,参数1在task完成触发,参数2在task失败触发
   * `task`参数1,`taskEnd`,在异步任务完成时调用,通知`taskontrol`任务完成
   * `task`参数2,`taskError`,在异步任务出错时调用,通知`taskcontorl`重试
 
-*示例:*
+*task示例:*
 ```
 https = require('https');
 
@@ -69,9 +70,6 @@ var task = function(taskEnd, taskError) {
       this.abort();
     });
 }
-
-// 添加任务到TaskControl中
-myTaskControl.addTask(task);
 
 ```
 

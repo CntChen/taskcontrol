@@ -17,6 +17,7 @@ var TaskControl = function(opt) {
   this.MaxTasksOnTaskQueue = this.multi * defaulTaskQueueExpand;
   this.TaskControlTimeout = defaultTaskControlTimeout;
   this.taskControlTimeoutInterval = null;
+  this.taskGenerator = null;
 }
 
 
@@ -25,18 +26,30 @@ TaskControl.prototype.readyToAddTask = function() {
 }
 
 
+TaskControl.prototype.addTaskGenerator = function(generator) {
+  this.taskGenerator = generator;
 
-TaskControl.prototype.addTask = function(task) {
-  if(this.taskQueue.length >= this.MaxTasksOnTaskQueue * 2){
+  // init task queue
+  while(this._addTaskFromTaskGenerator()){};
+}
+
+
+TaskControl.prototype._addTaskFromTaskGenerator = function(){
+  if(this.taskQueue.length >= this.MaxTasksOnTaskQueue){
     //console.log('task queue full, please add task later.');
-    //return false;
+    return false;
   }
 
-  //console.log('task added.');
-  task.id = task.id || ++this.increaseID;
-  this.taskQueue.push(task);
+  var next = this.taskGenerator.next();
+  if (!next.done) {
+    var task = next.value;
+    //console.log('task added.');
+    task.id = task.id || ++this.increaseID;
+    this.taskQueue.push(task);
+    return true;
+  }
 
-  return true;
+  return false;
 }
 
 
@@ -95,6 +108,8 @@ TaskControl.prototype.error = function(taskID) {
 
 
 TaskControl.prototype.startNextTask = function() {
+  this._addTaskFromTaskGenerator();
+
   this.TaskControlTimeout = defaultTaskControlTimeout;
 
   if (this.taskQueue.length === 0) {
