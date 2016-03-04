@@ -1,7 +1,7 @@
 var defaultMulti = 5;
 var defaultRetry = 5;
 var defaultTaskControlTimeout = 100;
-var defaulTaskQueueExpand = 10;
+var defaulTaskQueueExpand = 1;
 
 
 var TaskControl = function(opt) {
@@ -47,9 +47,10 @@ TaskControl.prototype._addTaskFromTaskGenerator = function(){
     task.id = task.id || ++this.increaseID;
     this.taskQueue.push(task);
     return true;
+  } else{
+    console.log('taskGenerator done.');
+    return false;
   }
-
-  return false;
 }
 
 
@@ -61,7 +62,7 @@ TaskControl.prototype.start = function() {
     that.TaskControlTimeout--;
     if (that.TaskControlTimeout <= 0) {
       console.log('TaskControl timeout. Task left:', that.taskQueue.length);
-      clearInterval(this.taskControlTimeoutInterval);
+      clearInterval(that.taskControlTimeoutInterval);
     }
   }, 1000);
 }
